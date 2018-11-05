@@ -228,6 +228,7 @@ What this does, it’s assuring machines are registered to Insights and Satellit
 And repeat the steps. If no errors, proceed to the next section, If there was an error see below:
 
 NOTE: If bootstrap.py fails with this error:
+
 ~~~~
 [RUNNING], [2018-04-19 06:28:43], [Calling Foreman API to create a host entry associated with the group & org]
 An error occurred: HTTP Error 422: Unprocessable Entity
@@ -259,7 +260,7 @@ When logging into the Satellite UI you should see your systems registered. Go to
 
 ![](images/image79.png)
 
-###Installing the Insights client
+### Installing the Insights client
 
 Now it’s the time to install the Insights RPM and register your system to Red Hat Insights.
 
@@ -283,7 +284,7 @@ Uploading Insights data, this may take a few minutes
 Upload completed successfully!
 ~~~~
 
-###Fixing the payload injection security issue
+### Fixing the payload injection security issue
 
 Now, going back to the Satellite UI, click on Red Hat Insights → Overview, where you should see all your registered systems, actions summary (highlighted by priority) as well as latest updates from Red Hat. 
 
@@ -359,7 +360,7 @@ Wait until this step completes before moving to the next step.
 
 Congratulations, you’re no longer vulnerable to the payload injection vulnerability!
 
-###Automatically fixing the payload injection security issue via Ansible Playbook
+### Automatically fixing the payload injection security issue via Ansible Playbook
 
 It is also possible to automate some of the issues with an Ansible Playbook that Insights provides us. You can see that in the top left corner of every single issue with the Ansible logo in blue if a playbook is available, or in grey if it’s not.
 
