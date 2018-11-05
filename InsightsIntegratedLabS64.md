@@ -1,4 +1,4 @@
-#Hands on Red Hat Management Lab
+# Hands on Red Hat Management Lab
 ## TAM Enablement
 
 ### Amaya Gil Pippino
@@ -34,7 +34,7 @@ Let’s log into the Red Hat Products that you will use in this lab so they are 
 
 The following labs take place within the fictional **EXAMPLE.COM** company.
 
-#Lab 1: Red Hat Satellite for Content Lifecycle Management
+# Lab 1: Red Hat Satellite for Content Lifecycle Management
 ##Goal of Lab
 
 In this lab, you will be provided the necessary steps and background information on how to configure Red Hat Insights to be used Red Hat Satellite for content host vulnerabilities reporting and automatic remediation. Some of the values may be pre-populated for you, and the pre-populated values may be required for subsequent labs, so **do not remove** the pre-populated values.
@@ -51,9 +51,11 @@ NOTE on Lab Exercise Setup: Based on the structure/mobility of the lab, it’s p
 
 SSH from your jumpbox as outlined in Lab 0 to root@sat.example.com and restart katello service as follows:
 
-> * [lab-user@workstation $] sudo -i
-> * [root@workstation #] ssh sat.example.com
-> * [root@satellite ~]# katello-service restart
+~~~~
+[lab-user@workstation $] sudo -i
+[root@workstation #] ssh sat.example.com
+[root@satellite ~]# katello-service restart
+~~~~
 
 In Satellite 6.4 Insights integration has gone deeper than ever. With this new release, now Insights remediation playbooks can be executed from within Satellite Web Interface. In order to do so, we simply need to be able to allow Foreman to execute commands remotely.
 
@@ -63,49 +65,60 @@ This plugin is installed in Satellite 6.4 by default.
 
 Next you have to setup ssh keys. By default smart proxy loads the key from `/usr/share/foreman-proxy/.ssh/id_rsa_foreman_proxy`. To customize it you can edit the configuration in `/etc/foreman-proxy/settings.d/remote_execution_ssh.yml`. Without customization you need to create new ssh key and distribute it to target hosts. The key must not use passphrase. We are not going to customize it, and use the default location.
 
-> * [root@sat settings.d]# cat remote_execution_ssh.yml
-> * ---
-> * :enabled: https
-> * :ssh_identity_key_file: /var/lib/foreman-proxy/ssh/id_rsa_foreman_proxy
-> * :local_working_dir: /var/tmp
-> * :remote_working_dir: /var/tmp
-> * :kerberos_auth: false
-> * 
-> * # Whether to run remote execution jobs asynchronously
-> * :async_ssh: false
+~~~~
+[root@sat settings.d]# cat remote_execution_ssh.yml
+---
+:enabled: https
+:ssh_identity_key_file: /var/lib/foreman-proxy/ssh/id_rsa_foreman_proxy
+:local_working_dir: /var/tmp
+:remote_working_dir: /var/tmp
+:kerberos_auth: false
+ #Whether to run remote execution jobs asynchronously
+:async_ssh: false
+~~~~
 
 Please note these are NOT root's ssh keys, but specific to foreman-proxy.
 
 To generate a key, run following command on the host where Smart Proxy runs:
 
-> * [root@satellite ~]# mkdir ~foreman-proxy/.ssh
-> * [root@satellite ~]# chown foreman-proxy ~foreman-proxy/.ssh
-> * [root@satellite ~]# sudo -u foreman-proxy ssh-keygen -f ~foreman-proxy/.ssh/id_rsa_foreman_proxy -N ''
+~~~~
+[root@satellite ~]# mkdir ~foreman-proxy/.ssh
+[root@satellite ~]# chown foreman-proxy ~foreman-proxy/.ssh
+[root@satellite ~]# sudo -u foreman-proxy ssh-keygen -f ~foreman-proxy/.ssh/id_rsa_foreman_proxy -N ''
+~~~~
 
 When using SELinux make sure the directory and the files have correct labels of ssh_home_t. If not, restore the context:
 
-> * restorecon -RvF ~foreman-proxy/.ssh
+~~~~
+restorecon -RvF ~foreman-proxy/.ssh
+~~~~
 
 Don’t forget to restart Foreman, Smart Proxy and Foreman tasks so plugins are loaded
 
-> * service httpd restart
-> * service foreman-tasks restart
-> * service foreman-proxy restart
+~~~~
+service httpd restart
+service foreman-tasks restart
+service foreman-proxy restart
+~~~~
 
 Finally, you have to refresh the Smart Proxy features in the Foreman.
 
-> * systemctl restart smart_proxy_dynflow_core
+~~~~
+systemctl restart smart_proxy_dynflow_core
+~~~~
 
 ## Remote Hosts Configuration
 The remote hosts need to be configured to accept the private key that the smart proxy is using. root is used as the default user for accessing remote hosts via SSH. You may set the `remote_execution_ssh_user` global setting to change the default. If you would like to override at the host group, host, or other level, you may use parameters to do so. Set a parameter called `remote_execution_ssh_user`.
 
 The ssh keys for the smart proxies are available as a host parameter - remote_execution_ssh_keys. This allows you to manage the authorized keys with your configuration management platform of choice, or through a provisioning template.
 
-> * ssh-copy-id -i ssh/id_rsa_foreman_proxy.pub root@ic1.example.com
+~~~~
+ssh-copy-id -i ssh/id_rsa_foreman_proxy.pub root@ic1.example.com
+~~~~
 
 This step has to be repeated for all the icX client machines.
 
-#Lab 2: Proactive Security and Automated Risk Management with Red Hat Insights
+# Lab 2: Proactive Security and Automated Risk Management with Red Hat Insights
 
 ## Goal of Lab
 
@@ -134,41 +147,53 @@ The following are the steps needed to get your Red Hat Insights managed hosts re
 
 To login to your client VM, first SSH into your workstation node at workstation-**<GUID>**.rhpds.opentlc.com as lab-user. An ssh key is already in the home directory of your laptop, which should allow you to login without a password. Should a password be required, use **r3dh4t1!** as your password.
 
-> * [lab-user@localhost ~]$ ssh workstation-GUID.rhpds.opentlc.com
-> * [lab-user@workstation-GUID ~]$ sudo -i
+~~~~
+[lab-user@localhost ~]$ ssh workstation-GUID.rhpds.opentlc.com
+[lab-user@workstation-GUID ~]$ sudo -i
+~~~~
 
 From it, jump into every single one of the insights client machines (from ic1.example.com to ic9.example.com), also using ssh (ssh passwordless has already been configured for your convenience):
 
-> * [root@workstation ~]#ssh ic5.example.com
+~~~~
+[root@workstation ~]#ssh ic5.example.com
+~~~~
 
 **NOTE**: Due to the configuration of the account used for this lab (it’s shared amongst the different instances) you need to do this next step, which is a clean up of the hosts in Satellite. On the tower machine, there's also a playbook that basically does all what’s explained below, that can ease all the clean up and registration steps but for the sake of understanding, steps are deatiled here.
 
 Make sure old satellite info is removed:
 
-> * [root@icX ~]# yum clean all ; rm -rf /var/cache/yum/*
-> * [root@icX ~]# subscription-manager clean
-> * [root@icX ~]# rm -fv /etc/rhsm/ca/katello*
-> * [root@icX ~]# rm -fv /etc/rhsm/facts/katello*
-> * [root@icX ~]# rm -rfv /var/lib/puppet
-> * [root@icX ~]# yum remove -y katello-ca-consumer*
+~~~~
+[root@icX ~]# yum clean all ; rm -rf /var/cache/yum/*
+[root@icX ~]# subscription-manager clean
+[root@icX ~]# rm -fv /etc/rhsm/ca/katello*
+[root@icX ~]# rm -fv /etc/rhsm/facts/katello*
+[root@icX ~]# rm -rfv /var/lib/puppet
+[root@icX ~]# yum remove -y katello-ca-consumer*
+~~~~
 
 ### Adding your Insights hosts to Satellite
 
 You’d need to login to your client VM, first SSH into your workstation node at workstation-*GUID*.rhpds.opentlc.com as lab-user, the sudo to root. Should a password be required, use "**r3dh4t1!**" as your password. 
 
-> * [lab-user@localhost ~]$ ssh lab-user@workstation-GUID.rhpds.opentlc.com**
-> * [lab-user@workstation-GUID ~]$ sudo -i**
+~~~~
+[lab-user@localhost ~]$ ssh lab-user@workstation-GUID.rhpds.opentlc.com
+[lab-user@workstation-GUID ~]$ sudo -i
+~~~~
 
 From there, this is your "jumpbox" that will allow you to access each of the client machines (ic1.example.com through ic9.example.com), also using ssh (ssh passwordless has already been configured for your convenience). The following are the commands used.
 
 Pull down new bootstrap script from new Satellite 6 server:
 
-> * [root@icX ~]# curl https://sat.example.com/pub/bootstrap.py > bootstrap.py --insecure**
-> * [root@icX ~]# chmod +x bootstrap.py
+~~~~
+[root@icX ~]# curl https://sat.example.com/pub/bootstrap.py > bootstrap.py --insecure**
+[root@icX ~]# chmod +x bootstrap.py
+~~~~
 
 Run the bootstrap.py script using the Satellite manifest that uses certificate based authorization in order to register your machines with Satellite as follows (provide the password when required):
 
-> **[root@icX ~]#* ./bootstrap.py -l admin -s sat.example.com -o 'EXAMPLE.COM' -L 'Default Location' -g rhel7 -a rhel7**
+~~~~
+**[root@icX ~]#* ./bootstrap.py -l admin -s sat.example.com -o 'EXAMPLE.COM' -L 'Default Location' -g rhel7 -a rhel7**
+~~~~
 
 Please note, that this step has to be performed `in all icX client machines`.
 
@@ -176,11 +201,15 @@ In addition, manual installation and registration of the Insights client is also
 
 To install Insights RPM in each of your systems issue the following command:
 
-> **[root@icX ~]# yum -y install insights-client**
+~~~~
+[root@icX ~]# yum -y install insights-client
+~~~~
 
 And then, simply register each machine with Red Hat Insights as follows:
 
-> **[root@icX ~]# insights-client --register**
+~~~~
+[root@icX ~]# insights-client --register
+~~~~
 
 NOTE: On RHEL 7.5 client RPM has been renamed to insights-client, but this demo machines are using RHEL 7.0 and 7.3 for demonstration purposes, so the package name is still the old one.
 
@@ -188,23 +217,27 @@ NOTE: On RHEL 7.5 client RPM has been renamed to insights-client, but this demo 
 
 If you want to use it, from the jumpbox machine, jump to the tower one and execute the following playbook:
 
-> * **[root@workstation ~]# ssh tower**
-> * **[root@tower ~]# cd playbooks/**
-> * **[root@tower playbooks]# ansible-playbook canned-demo.yml**
+~~~~
+[root@workstation ~]# ssh tower
+[root@tower ~]# cd playbooks/
+[root@tower playbooks]# ansible-playbook canned-demo.yml
+~~~~
 
 What this does, it’s assuring machines are registered to Insights and Satellite and then, making sure there’s something to be fixed.
 
 And repeat the steps. If no errors, proceed to the next section, If there was an error see below:
 
 NOTE: If bootstrap.py fails with this error:
-`[RUNNING], [2018-04-19 06:28:43], [Calling Foreman API to create a host entry associated with the group & org]`
-`An error occurred: HTTP Error 422: Unprocessable Entity`
-`url: https://sat.example.com:443/api/v2/hosts/`
-`code: 422`
-`[...]`
-`"full_messages": "Name has already been taken"`
-`[...]`
-`Output truncated`
+~~~~
+[RUNNING], [2018-04-19 06:28:43], [Calling Foreman API to create a host entry associated with the group & org]
+An error occurred: HTTP Error 422: Unprocessable Entity
+url: https://sat.example.com:443/api/v2/hosts/
+code: 422
+[...]
+"full_messages": "Name has already been taken"
+[...]
+Output truncated
+~~~~
 
 It means machines have already been registered using subscription manager, in that case, you just have to delete the hosts from the Satellite UI and re-run bootstrap. See the below graphics. If your hosts were successful, continue past these screenshots.
 
@@ -236,15 +269,19 @@ If the systems are not showing up as registered, proceed with installing the RPM
 
 To install Insights RPM in each of your systems issue the following command:
 
-> * [root@ic5 ~]# yum -y install redhat-access-insights
+~~~~
+[root@ic5 ~]# yum -y install redhat-access-insights
+~~~~
 
 And then, simply register each machine with Red Hat Insights as follows:
 
-> * [root@ic5 ~]# redhat-access-insights --register
-> * Automatic daily scheduling for Insights has been enabled.
-> * Starting to collect Insights data
-> * Uploading Insights data, this may take a few minutes
-> * Upload completed successfully!
+~~~~
+[root@ic5 ~]# redhat-access-insights --register
+Automatic daily scheduling for Insights has been enabled.
+Starting to collect Insights data
+Uploading Insights data, this may take a few minutes
+Upload completed successfully!
+~~~~
 
 ###Fixing the payload injection security issue
 
@@ -276,27 +313,35 @@ Note: Reading the description for the vulnerability shows that the sysctl variab
 
 If not already there, login to your client VM, first SSH into your workstation node at workstation-*<GUID>*.rhpds.opentlc.com as lab-user. An ssh key is already in the home directory of your laptop, which should allow you to login without a password. Should a password be required, use “**r3dh4t1!**” as your password.
 
->* [lab-user@localhost ~]$ ssh workstation-GUID.rhpds.opentlc.com
->* [lab-user@workstation-GUID ~]$ sudo -i  
+~~~~
+[lab-user@localhost ~]$ ssh workstation-GUID.rhpds.opentlc.com
+[lab-user@workstation-GUID ~]$ sudo -i
+~~~~
 
 Now that you are in the workstation node, SSH into your RHEL7 client/host.
 
->* [root@workstation ~]# ssh ic6
+~~~~
+[root@workstation ~]# ssh ic6
+~~~~
 
 Now, as root, perform the recommended active mitigation. Edit the `/etc/sysctl.conf` file to add the mitigation configuration, and reload the kernel configuration:
 
->* [root@ic6 ~]# echo "net.ipv4.tcp_challenge_ack_limit = 2147483647" >> /etc/sysctl.conf
->* [root@ic6 ~]# sysctl -p
->* net.ipv4.tcp_challenge_ack_limit = 100
->* vm.legacy_va_layout = 0
->* net.ipv4.tcp_challenge_ack_limit = 2147483647
+~~~~
+[root@ic6 ~]# echo "net.ipv4.tcp_challenge_ack_limit = 2147483647" >> /etc/sysctl.conf
+[root@ic6 ~]# sysctl -p
+net.ipv4.tcp_challenge_ack_limit = 100
+vm.legacy_va_layout = 0
+net.ipv4.tcp_challenge_ack_limit = 2147483647
+~~~~
 
 After applying the active mitigation, we want to have the system report any changes, run the following command as root on ic6.example.com:
 
->* [root@ic6 ~]# redhat-access-insights
->* Starting to collect Insights data
->* Uploading Insights data, this may take a few minutes
->* Upload completed successfully!
+~~~~
+[root@ic6 ~]# redhat-access-insights
+Starting to collect Insights data
+Uploading Insights data, this may take a few minutes
+Upload completed successfully!
+~~~~
 
 Wait until this step completes before moving to the next step.
 
@@ -350,38 +395,45 @@ You should now download the playbook, however, it’s been already downloaded fo
 
 If not already there, login to your client VM, first SSH into your workstation node at workstation-*<GUID>*.rhpds.opentlc.com as the lab-user. An ssh key is already in the home directory of your laptop, which should allow you to login without a password. Should a password be required, use “**r3dh4t1!**” as your password.
 
->* [lab-user@localhost ~]$ ssh workstation-GUID.rhpds.opentlc.com
->* [lab-user@workstation-GUID ~]$ sudo -i  
+~~~~
+[lab-user@localhost ~]$ ssh workstation-GUID.rhpds.opentlc.com
+[lab-user@workstation-GUID ~]$ sudo -i
+~~~~
 
 Now that you are in the workstation node, SSH into the tower machine in order perform the recommended active mitigation with the Ansible Playbook.
 
->* [root@workstation ~]# ssh tower
+~~~~
+[root@workstation ~]# ssh tower
+~~~~
 
 Inspect the Ansible Playbook that Insights has created automatically for you:
 
->* [root@tower ~]# less payload-injection.yml
+~~~~
+[root@tower ~]# less payload-injection.yml
+~~~~
 
 Now, simply proceed to remediate the payload injection security issue by executing the Ansible Playbook as follows:
 
->* [root@tower ~]# ansible-playbook payload-injection.yml
->* PLAY [Set sysctl ipv4 challenge ack limit] 
->* ************************************************************************
->* TASK [Gathering Facts] 
->* ************************************************************************
->* ok: [ic7.example.com]
->* TASK [set the sysctl net.ipv4.tcp_challenge_ack_limit = 2147483647]
->* ***********************************************
->* changed: [ic7.example.com
->* PLAY [run insights]
->* ************************************************************************
->* TASK [run insights] 
->* ************************************************************************
->* ok: [ic7.example.com]
->* PLAY RECAP 
->* ************************************************************************
->* ic7.example.com                : 
->* ok=3        changed=1        unreachable=0        failed=0
-
+~~~~
+[root@tower ~]# ansible-playbook payload-injection.yml
+PLAY [Set sysctl ipv4 challenge ack limit] 
+************************************************************************
+TASK [Gathering Facts] 
+************************************************************************
+ok: [ic7.example.com]
+TASK [set the sysctl net.ipv4.tcp_challenge_ack_limit = 2147483647]
+***********************************************
+changed: [ic7.example.com
+PLAY [run insights]
+************************************************************************
+TASK [run insights] 
+************************************************************************
+ok: [ic7.example.com]
+PLAY RECAP 
+************************************************************************
+ic7.example.com                : 
+ok=3        changed=1        unreachable=0        failed=0
+~~~~
 
 Please note that when the execution is completed, the Insights agent is also run, so the latest state of the system is reporting into Insights automatically.
 
@@ -429,33 +481,41 @@ Like in the previous exercise, we need to log into the tower machine in order to
 
 If not already there, login to your client VM, first SSH into your workstation node at workstation-*<GUID>*.rhpds.opentlc.com as the lab-user. An ssh key is already in the home directory of your laptop, which should allow you to login without a password. Should a password be required, use “**r3dh4t1!**”  as  your password.
 
+~~~~
 [lab-user@localhost ~]$ ssh workstation-GUID.rhpds.opentlc.com
-[lab-user@workstation-GUID ~]$ sudo -i  
+[lab-user@workstation-GUID ~]$ sudo -i
+~~~~
 
 Now that you are in the workstation node, SSH into the tower machine in order perform the recommended active mitigation with the Ansible Playbook. 
 
+~~~~
 [root@workstation ~]# ssh tower
+~~~~
 
 Inspect the Ansible Playbook that Insights has created automatically for you:
 
->* [root@tower ~]# vi ic8-ic9-all.yml
->* - name: run insights to obtain latest report info
->*   hosts: ic8.example.com,ic9.example.com
->*   become: True
->*   tasks:
->*         - name: determine insights version
->*           shell: 'redhat-access-insights --version'
->*           changed_when: false
->*           register: insights_version
->*         - when: insights_version.stdout[0:2] != '1.'
->*           Block:
->* [...]
->* Output truncated
+~~~~
+[root@tower ~]# vi ic8-ic9-all.yml
+- name: run insights to obtain latest report info
+   hosts: ic8.example.com,ic9.example.com
+   become: True
+   tasks:
+         - name: determine insights version
+           shell: 'redhat-access-insights --version'
+           changed_when: false
+           register: insights_version
+         - when: insights_version.stdout[0:2] != '1.'
+           Block:
+[...]
+Output truncated
+~~~~
 
 Now, simply proceed to remediate the issues by executing the Ansible Playbook as follows:
->* [root@tower ~]# ansible-playbook ic8-ic9-all.yml
->* [...]
->* Output truncated
+~~~~
+[root@tower ~]# ansible-playbook ic8-ic9-all.yml
+[...]
+Output truncated
+~~~~
 
 Please note that when the execution is completed (this may take a while), the Insights agent is also run, so the latest state of the system is reporting into Insights automatically.
 
@@ -482,8 +542,10 @@ Tower supports integration with Red Hat Insights. Once a host is registered with
 
 If not already there, login to your client VM, first SSH into your workstation node at workstation-*<GUID>*.rhpds.opentlc.com as the lab-user. An ssh key is already in the home directory of your laptop, which should allow you to login without a password. Should a password be required, use “**r3dh4t1!**”  as  your password.
 
->* [lab-user@localhost ~]$ ssh workstation-GUID.rhpds.opentlc.com
->* [lab-user@workstation-GUID ~]$ sudo -i  
+~~~~
+[lab-user@localhost ~]$ ssh workstation-GUID.rhpds.opentlc.com
+[lab-user@workstation-GUID ~]$ sudo -i
+~~~~
 
 In your Firefox web browser, click on the tab you have opened to your Red Hat Ansible Tower UI. Log back in with adminas the username and **r3dh4t1!** as your password.
 
