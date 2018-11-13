@@ -4,7 +4,7 @@
 ### Amaya Rosa Gil Pippino
 ### Senior Technical Marketing Manganer
 
-##README.1ST
+## README.1ST
 
 The goal of these lab exercises are to introduce you to a variety of Red Hat products that can help you with managing and automating infrastructure resources. You will be able to demonstrate the power and flexibility of Red Hat management learning how to confgurate Red Hat Insights integrated into Red Hat Satellite and Ansible Tower by Red Hat.
 
@@ -29,7 +29,7 @@ Let’s log into the Red Hat Products that you will use in this lab so they are 
 3. `[lab-user@localhost ~]$ ssh lab-user@workstation-GUID.rhpds.opentlc.com`
 4. **Run ‘`sudo -i`’ once you logon as lab-user to the jumpbox. This gives you root, and root has SSH keys for every host you will need to login to**.
 
-###NOTE:
+**NOTE:**
 **This step is not required**, but If you need to troubleshoot or power on/off/reboot a system, you can use the environment’s power control and consoles by clicking the link on your GUID page. The password for any consoles will be with username ‘root’ and password "****r3dh4t1!****". From this page, you will be able to access all of the Red Hat Products that you will use in this lab. Press the start button at the top right to turn on all the Red Hat Product VMs. Then, click on https for all the Red Hat Products to access the UI. For applications, You may also log into the UI of all the Red Hat Products with ‘admin’ as the Username and “****r3dh4t1!****” (without the quotes) as the Password.
 
 The following labs take place within the fictional **EXAMPLE.COM** company.
