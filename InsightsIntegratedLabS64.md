@@ -2,7 +2,7 @@
 ## TAM Enablement
 
 ### Amaya Rosa Gil Pippino
-###Senior Technical Marketing Manganer
+### Senior Technical Marketing Manganer
 
 ##README.1ST
 
@@ -315,7 +315,7 @@ Now, going back to the Satellite UI, click on Red Hat Insights → Overview, whe
 
 In this lab, we will fix the specific `Kernel vulnerable to man-in-the-middle via payload injection (CVE-2016-5696)` on your client VMs without causing downtime. 
 
-####STEPS:
+###STEPS:
 
 1. From your Satellite 6.4 UI, click on Insights → Inventory.
 
