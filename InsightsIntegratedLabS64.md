@@ -10,7 +10,7 @@ The goal of these lab exercises are to introduce you to a variety of Red Hat pro
 
 Upon completion of this lab material, you should have a better understanding of how to perform management tasks in your environments, how to more securely maintain hosts, and how to achieve greater efficiencies with automating tasks and managing systems within your infrastructure, leveraging Insights capabilities.
 
-Most of the labs are exclusive of any other lab - i.e. If you want to only perform the Satellite lab, then you can skip to the Satellite lab.  If you would like to focus on an individual lab or specific portfolio product, please use the LAB INDEX to select the Lab you would like to begin on. Lab 0 should be viewed before attempting any other labs. If there is a problem with a step in your lab please raise your hand and contact one of the lab instructors.
+Most of the labs are exclusive of any other lab - i.e. If you want to only perform the Satellite lab, then you can skip to the Satellite lab.  If you would like to focus on an individual lab or specific portfolio product, please use the LAB INDEX to select the Lab you would like to begin on. Step 0 should be viewed before attempting any other labs. If there is a problem with a step in your lab please raise your hand and contact one of the lab instructors.
 
 This lab is geared towards systems administrators, cloud administrators and operators, architects, and others working on infrastructure operations interested in learning how to automate management across a heterogeneous infrastructure. The prerequisite for this lab include basic Linux skills gained from Red Hat Certified System Administrator (RHCSA) or equivalent system administration skills. Knowledge of virtualization and basic Linux scripting would also be helpful, but not required.
 
@@ -30,7 +30,7 @@ Let’s log into the Red Hat Products that you will use in this lab so they are 
 4. **Run ‘`sudo -i`’ once you logon as lab-user to the jumpbox. This gives you root, and root has SSH keys for every host you will need to login to**.
 
 **NOTE:**
-**This step is not required**, but If you need to troubleshoot or power on/off/reboot a system, you can use the environment’s power control and consoles by clicking the link on your GUID page. The password for any consoles will be with username ‘root’ and password "****r3dh4t1!****". From this page, you will be able to access all of the Red Hat Products that you will use in this lab. Press the start button at the top right to turn on all the Red Hat Product VMs. Then, click on https for all the Red Hat Products to access the UI. For applications, You may also log into the UI of all the Red Hat Products with ‘admin’ as the Username and “****r3dh4t1!****” (without the quotes) as the Password.
+**This step is not required**, but If you need to troubleshoot or power on/off/reboot a system, you can use the environment’s power control and consoles by clicking the link on your GUID page. The password for any consoles will be with username ‘root’ and password "**r3dh4t1!**". From this page, you will be able to access all of the Red Hat Products that you will use in this lab. Press the start button at the top right to turn on all the Red Hat Product VMs. Then, click on https for all the Red Hat Products to access the UI. For applications, You may also log into the UI of all the Red Hat Products with ‘admin’ as the Username and “****r3dh4t1!****” (without the quotes) as the Password.
 
 The following labs take place within the fictional **EXAMPLE.COM** company.
 
@@ -148,7 +148,7 @@ The ssh keys for the smart proxies are available as a host parameter  (`remote_e
 
 The goal of this lab is to introduce you to the proactive security capabilities of Red Hat Insights. This lab assumes the following:
 
-*   You started all your VMs, per the instructions in Lab 0.
+*   You started all your VMs, per the instructions in Step 0.
 *   Did not delete any of the key items in the pre-populated Satellite 6 configuration, which are necessary for Insights to work properly.
 
 ## Introduction
@@ -210,7 +210,7 @@ From there, this is your "jumpbox" that will allow you to access each of the cli
 Pull down new bootstrap script from new Satellite 6 server:
 
 ~~~~
-[root@icX ~]# curl https://sat.example.com/pub/bootstrap.py > bootstrap.py --insecure**
+[root@icX ~]# curl https://sat.example.com/pub/bootstrap.py > bootstrap.py --insecure
 [root@icX ~]# chmod +x bootstrap.py
 ~~~~
 
@@ -560,7 +560,7 @@ Now from the Satellite UI, click on Red Hat Insights → Inventory you will not
 
 ## Goal of Lab
 
-The goal of this lab is to introduce you to the proactive security capabilities of Red Hat Insights and automatic remediation with Ansible Tower. This lab assumes that you started all your VMs, as instructed in Lab 0, which is necessary for Red Hat Insights to work properly.  This will also be your first use of Tower in this lab if you are doing the labs sequentially. You should require no prior Tower knowledge to follow all instructions.
+The goal of this lab is to introduce you to the proactive security capabilities of Red Hat Insights and automatic remediation with Ansible Tower. This lab assumes that you started all your VMs, as instructed in Step 0, which is necessary for Red Hat Insights to work properly.  This will also be your first use of Tower in this lab if you are doing the labs sequentially. You should require no prior Tower knowledge to follow all instructions.
 
 ## Introduction
 
