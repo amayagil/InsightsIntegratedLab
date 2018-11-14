@@ -277,6 +277,10 @@ Now it’s the time to install the Insights RPM and register your system to Red 
 
 bootstrap.py should have taken care of this for you. If your lab is setup natively to the environment, if you changed some settings this may not happen automatically, so to check navigate to Insights → Overview.
 
+You should see something similar to the following:
+
+![](images/image80.png)
+
 If the systems are not showing up as registered, proceed with installing the RPMs on each host.
 
 To install Insights RPM in each of your systems issue the following command:
