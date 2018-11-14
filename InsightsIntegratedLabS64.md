@@ -236,8 +236,6 @@ And then, simply register each machine with Red Hat Insights as follows:
 [root@icX ~]# insights-client --register
 ~~~~
 
-NOTE: On RHEL 7.5 client RPM has been renamed to insights-client, but this demo machines are using RHEL 7.0 and 7.3 for demonstration purposes, so the package name is still the old one.
-
 And repeat the steps. If no errors, proceed to the next section, If there was an error see below:
 
 NOTE: If bootstrap.py fails with this error:
