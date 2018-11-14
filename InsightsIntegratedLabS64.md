@@ -137,7 +137,7 @@ The remote hosts need to be configured to accept the private key that the smart 
 The ssh keys for the smart proxies are available as a host parameter  (`remote_execution_ssh_keys`). This allows you to manage the authorized keys with your configuration management platform of choice, or through a provisioning template.
 
 ~~~~
-[root@sat ~]# ssh-copy-id -i ssh/id_rsa_foreman_proxy.pub root@ic1.example.com
+[root@sat ~]# ssh-copy-id -i /var/lib/foreman-proxy/ssh/id_rsa_foreman_proxy.pub root@icX.example.com
 ~~~~
 
 **NOTE:** This step has to be repeated for all the icX client machines.
@@ -286,13 +286,13 @@ If the systems are not showing up as registered, proceed with installing the RPM
 To install Insights RPM in each of your systems issue the following command:
 
 ~~~~
-[root@ic5 ~]# yum -y install insights-client
+[root@icX ~]# yum -y install insights-client
 ~~~~
 
 And then, simply register each machine with Red Hat Insights as follows:
 
 ~~~~
-[root@ic5 ~]# insights-client --register
+[root@icX ~]# insights-client --register
 Automatic daily scheduling for Insights has been enabled.
 Starting to collect Insights data
 Uploading Insights data, this may take a few minutes
