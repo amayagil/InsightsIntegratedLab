@@ -142,6 +142,10 @@ The ssh keys for the smart proxies are available as a host parameter  (`remote_e
 
 **NOTE:** This step has to be repeated for all the icX client machines.
 
+~~~~
+[root@sat ~]# for i in `seq 1 9` ; do ssh-copy-id -i /var/lib/foreman-proxy/ssh/id_rsa_foreman_proxy.pub root@ic$i.example.com ; done
+~~~~
+
 # Lab 2: Proactive Security and Automated Risk Management with Red Hat Insights
 
 ## Goal of Lab
@@ -583,15 +587,21 @@ If not already there, login to your client VM, first SSH into your workstation n
 
 In your Firefox web browser, click on the tab you have opened to your Red Hat Ansible Tower UI. Log back in with adminas the username and **r3dh4t1!** as your password.
 
-Credentials have already been provided for your convenience.
+Feel free to inspect the credentials already created (click on **Settings -> Credentials**) you should look at "**RH Customer Portal Insights Credentials**"
+
+![image alt text](images/image_19.png)
+
+Please note, the Red Hat Customer Portal account name is given.
+
+Now inspect the "**Example.com SSH Password**" credential. This is a machine credential, it is used for Tower to be able to log into the machines and execute commands, therefore, it’ll be used to remediate them.
 
 ### Creating an inventory
 
 The Insights playbook contains a hosts: line where the value is the hostname that Insights itself knows about, which may be different than the hostname that Tower knows about. Therefore, make sure that the hostnames in the Tower inventory match up with the system in the Red Hat Insights Portal.
 
-For your convenience, the Insights inventory has been already created for you.
+For your convenience, the Insights inventory has been already created for you, feel free to inspect it, as well (this one is an Smart Inventory which pulls information from Satellite).
 
-![](images/image126.png)
+![image alt text](images/image_20.png)
 
 Please note that typically, your inventory already contains Insights hosts. Tower just doesn’t know about them yet. The Insights credential allows Tower to get information from Insights about an Insights host. Tower identifying a host as an Insights host can occur without an Insights credential with the help of scan facts.yml file.
 
@@ -603,7 +613,7 @@ In order for Tower to utilize Insights Maintenance Plans, it must have visibilit
 2.  Click the ![add](images/image23.png)button, which launches the New Project window.
 3.  Enter the appropriate details into the required fields, at minimum. Note the following fields requiring specific Insights-related entries:
 
-*   Name: Insights Scan Summit
+*   Name: Insights Scan Project
 *   Organization:         Red Hat's Management BU Example.com
 *   SCM Type: Select Git.
 *   Upon selecting the SCM type, the Source Details field expands.
@@ -623,14 +633,14 @@ Now it’s the time to put all the pieces together, by using a job template that
 
 ### Creating a Job Template
 
-1.  Click the Templates main link to access the Templates page.
+1.  Click the **Templates** main link to access the Templates page.
 2.  Click the ![add](images/image23.png) button and select Job Template, which launches the New Job Template window.
 3.  Enter the appropriate details into the required fields, at minimum. Note the following fields requiring specific Insights-related entries:
 
-*   Name: Insights Scan Summit
+*   Name: Insights Scan Template
 *   Job Type: Choose Run from the drop-down menu list.
 *   Inventory: Example.com Satellite Inventory
-*   Project: Enter the name of the Scan project you previously created, Insights Scan Summit.
+*   Project: Enter the name of the Scan project you previously created, Insights Scan Project.
 *   Playbook: Select scan_facts.yml from the drop-down menu list. This is the playbook associated with the Scan project you previously set up.
 *   Credential: Example.com SSH Password. The credential does not have to be an Insights credential, but machine (also created for your convenience).
 *   Click to select Use Fact Cache from the Options field.
@@ -651,23 +661,19 @@ Now, we can see Insights data from the Ansible Tower UI.
 
 ### Viewing Insights data into Tower
 
-1.  Click the Inventories main link to access the Inventories page.
-2.  In the list of inventories, click to open the details of your Insights inventory.
+In order to do reporting from Insights, we need to use inventories. For this demo, as there is a Satellite server, we’ll use an smart inventory that pulls data from Satellite (creating it is out of the scope of this demo).
 
-![](images/image122.png)
+To see data from Insights, just click the **Inventories** main link to access the Inventories page and then choose "**Example.com Satellite Inventory**". 
 
-3.  Click the Hosts tab to access the Insights hosts that have been loaded from the scan process.
-4.  Click to open one of the hosts that was loaded from Insights (ic6.example.com, for instance).
+Click the **Hosts** button to access the Insights hosts that have been loaded from the scan process. Once there, click to open one of the hosts that was loaded from Insights (ic6.example.com, for instance).
 
-![](images/image97.png)
+![image alt text](images/image_27.png)
 
 Notice the Insights tab is now shown on Hosts page. This indicates that Insights and Tower have reconciled the inventories and is now set up for one-click Insights playbook runs. Click on it.
 
-![](images/image119.png)
+![image alt text](images/image_28.png)
 
 You now can see a list of issues Insights has identified and whether or not the issues can be resolved with a playbook is also shown.
-
-## BONUS!
 
 ## Automatically remediate Insights Inventory
 
@@ -729,4 +735,4 @@ The playbook execution screen appears and shows you the result.
 
 ![](images/image123.png)
 
-Note: There is a known race condition where when executing the playbook it will fail on the first run for some older RHEL 7.0 hosts. Simply re-run the playbook and everything should complete successfully, and the hosts that failed the first time will complete remediation.
+**NOTE:** There is a known race condition where when executing the playbook it will fail on the first run for some older RHEL 7.0 hosts. Simply re-run the playbook and everything should complete successfully, and the hosts that failed the first time will complete remediation.
