@@ -25,7 +25,7 @@ Go to Services -> Catalogs
  
 Under **All Services** -> **Automation & Management** -> select ***Insights Integrated Lab***
   
-![Insights Canned Demo](images/rhpds-order-demo.png)
+![Insights Canned Demo](images/rhpds-order-lab.png)
 
 On the right pane, click Order
 
