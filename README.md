@@ -23,7 +23,7 @@ Go to Services -> Catalogs
 
 ![Service catalogs](images/rhpds-navigate-to-service-catalog.png)
  
-Under **All Services** -> **Automation & Management** -> select ***Insights Canned Demo***
+Under **All Services** -> **Automation & Management** -> select ***Insights Integrated Lab***
   
 ![Insights Canned Demo](images/rhpds-order-demo.png)
 
