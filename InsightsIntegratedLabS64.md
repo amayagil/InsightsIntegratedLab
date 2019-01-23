@@ -2,7 +2,7 @@
 ## TAM Enablement
 
 ### Amaya Rosa Gil Pippino
-### Senior Technical Marketing Manganer
+### Senior Technical Marketing Manager
 
 ## README.1ST
 
