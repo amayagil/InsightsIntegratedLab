@@ -100,6 +100,19 @@ When using SELinux make sure the directory and the files have correct labels of 
 [root@sat ~]# restorecon -RvF ~foreman-proxy/.ssh
 ~~~~
 
+**NOTE:** Make sure those keys and the default ones (seen on `/etc/foreman-proxy/settings.d/remote_execution_ssh.yml` configuration file):
+~~~~
+[root@sat ~]# ll ~foreman-proxy/.ssh/id_rsa_foreman_proxy
+-rw-------. 1 foreman-proxy foreman-proxy 1679 Jan 24 08:34 /usr/share/foreman-proxy/.ssh/id_rsa_foreman_proxy
+[root@sat ~]# ll /var/lib/foreman-proxy/ssh/id_rsa_foreman_proxy
+-rw-------. 1 foreman-proxy foreman-proxy 1675 Jan 24 09:52 /var/lib/foreman-proxy/ssh/id_rsa_foreman_proxy
+~~~~
+
+If this is your case, please do:
+~~~~
+[root@sat ~]# cp ~foreman-proxy/.ssh/id_rsa_foreman_proxy* /var/lib/foreman-proxy/ssh/
+~~~~
+
 Don’t forget to restart Foreman, Smart Proxy and Foreman tasks so plugins are loaded:
 
 ~~~~
