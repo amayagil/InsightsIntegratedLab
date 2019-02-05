@@ -1,5 +1,4 @@
 # Hands on Red Hat Management Lab
-## TAM Enablement
 
 ### Amaya Rosa Gil Pippino
 #### Senior Solutions Architect
