@@ -2,7 +2,8 @@
 ## TAM Enablement
 
 ### Amaya Rosa Gil Pippino
-### Senior Technical Marketing Manganer
+#### Senior Solutions Architect
+#### EMEA Office of Technology
 
 ## README.1ST
 
